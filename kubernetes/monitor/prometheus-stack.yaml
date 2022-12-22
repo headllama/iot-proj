@@ -1,7 +1,3 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: monitoring
 ---
 # Source: kube-prometheus-stack/charts/grafana/templates/serviceaccount.yaml
 apiVersion: v1
@@ -10,11 +6,11 @@ metadata:
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
 ---
 # Source: kube-prometheus-stack/charts/kube-state-metrics/templates/serviceaccount.yaml
 apiVersion: v1
@@ -26,11 +22,11 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "2.7.0"
-    release: prometheus
-  name: prometheus-kube-state-metrics
-  namespace: monitoring
+    release: prometheus-stack
+  name: prometheus-stack-kube-state-metrics
+  namespace: backstage
 imagePullSecrets:
   []
 ---
@@ -38,86 +34,86 @@ imagePullSecrets:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: prometheus-prometheus-node-exporter
-  namespace: monitoring
+  name: prometheus-stack-prometheus-node-exporter
+  namespace: backstage
   labels:
     helm.sh/chart: prometheus-node-exporter-4.8.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: prometheus-node-exporter
     app.kubernetes.io/name: prometheus-node-exporter
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "1.5.0"
     jobLabel: node-exporter
-    release: prometheus
+    release: prometheus-stack
 ---
 # Source: kube-prometheus-stack/templates/alertmanager/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: prometheus-kube-prometheus-alertmanager
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-alertmanager
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-alertmanager
     app.kubernetes.io/name: kube-prometheus-stack-alertmanager
     app.kubernetes.io/component: alertmanager
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 ---
 # Source: kube-prometheus-stack/templates/prometheus-operator/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: prometheus-kube-prometheus-operator
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-operator
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-operator
     app.kubernetes.io/name: kube-prometheus-stack-prometheus-operator
     app.kubernetes.io/component: prometheus-operator
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 ---
 # Source: kube-prometheus-stack/templates/prometheus/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: prometheus-kube-prometheus-prometheus
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-prometheus
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-prometheus
     app.kubernetes.io/name: kube-prometheus-stack-prometheus
     app.kubernetes.io/component: prometheus
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 ---
 # Source: kube-prometheus-stack/charts/grafana/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
@@ -130,17 +126,17 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: alertmanager-prometheus-kube-prometheus-alertmanager
-  namespace: monitoring
+  name: alertmanager-prometheus-stack-kube-prom-alertmanager
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-alertmanager
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   alertmanager.yaml: "Z2xvYmFsOgogIHJlc29sdmVfdGltZW91dDogNW0KaW5oaWJpdF9ydWxlczoKLSBlcXVhbDoKICAtIG5hbWVzcGFjZQogIC0gYWxlcnRuYW1lCiAgc291cmNlX21hdGNoZXJzOgogIC0gc2V2ZXJpdHkgPSBjcml0aWNhbAogIHRhcmdldF9tYXRjaGVyczoKICAtIHNldmVyaXR5ID1+IHdhcm5pbmd8aW5mbwotIGVxdWFsOgogIC0gbmFtZXNwYWNlCiAgLSBhbGVydG5hbWUKICBzb3VyY2VfbWF0Y2hlcnM6CiAgLSBzZXZlcml0eSA9IHdhcm5pbmcKICB0YXJnZXRfbWF0Y2hlcnM6CiAgLSBzZXZlcml0eSA9IGluZm8KLSBlcXVhbDoKICAtIG5hbWVzcGFjZQogIHNvdXJjZV9tYXRjaGVyczoKICAtIGFsZXJ0bmFtZSA9IEluZm9JbmhpYml0b3IKICB0YXJnZXRfbWF0Y2hlcnM6CiAgLSBzZXZlcml0eSA9IGluZm8KcmVjZWl2ZXJzOgotIG5hbWU6ICJudWxsIgpyb3V0ZToKICBncm91cF9ieToKICAtIG5hbWVzcGFjZQogIGdyb3VwX2ludGVydmFsOiA1bQogIGdyb3VwX3dhaXQ6IDMwcwogIHJlY2VpdmVyOiAibnVsbCIKICByZXBlYXRfaW50ZXJ2YWw6IDEyaAogIHJvdXRlczoKICAtIG1hdGNoZXJzOgogICAgLSBhbGVydG5hbWUgPX4gIkluZm9JbmhpYml0b3J8V2F0Y2hkb2ciCiAgICByZWNlaXZlcjogIm51bGwiCnRlbXBsYXRlczoKLSAvZXRjL2FsZXJ0bWFuYWdlci9jb25maWcvKi50bXBs"
@@ -152,11 +148,11 @@ metadata:
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
-  name: prometheus-grafana-config-dashboards
-  namespace: monitoring
+  name: prometheus-stack-grafana-config-dashboards
+  namespace: backstage
 data:
   provider.yaml: |-
     apiVersion: 1
@@ -176,12 +172,12 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 data:
@@ -204,18 +200,18 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-kube-prometheus-grafana-datasource
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-grafana-datasource
+  namespace: backstage
   labels:
     grafana_datasource: "1"
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   datasource.yaml: |-
@@ -224,7 +220,7 @@ data:
     - name: Prometheus
       type: prometheus
       uid: prometheus
-      url: http://prometheus-kube-prometheus-prometheus.monitoring:9090/
+      url: http://prometheus-stack-kube-prom-prometheus.backstage:9090/
       access: proxy
       isDefault: true
       jsonData:
@@ -234,8 +230,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-alertmanager-overview
+  namespace: backstage
+  name: prometheus-stack-kube-prom-alertmanager-overview
   annotations:
     {}
   labels:
@@ -243,11 +239,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   alertmanager-overview.json: |-
@@ -847,8 +843,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-apiserver
+  namespace: backstage
+  name: prometheus-stack-kube-prom-apiserver
   annotations:
     {}
   labels:
@@ -856,11 +852,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   apiserver.json: |-
@@ -2618,8 +2614,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-cluster-total
+  namespace: backstage
+  name: prometheus-stack-kube-prom-cluster-total
   annotations:
     {}
   labels:
@@ -2627,11 +2623,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   cluster-total.json: |-
@@ -4499,8 +4495,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-controller-manager
+  namespace: backstage
+  name: prometheus-stack-kube-prom-controller-manager
   annotations:
     {}
   labels:
@@ -4508,11 +4504,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   controller-manager.json: |-
@@ -5688,8 +5684,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-etcd
+  namespace: backstage
+  name: prometheus-stack-kube-prom-etcd
   annotations:
     {}
   labels:
@@ -5697,11 +5693,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   etcd.json: |-
@@ -6914,8 +6910,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-grafana-overview
+  namespace: backstage
+  name: prometheus-stack-kube-prom-grafana-overview
   annotations:
     {}
   labels:
@@ -6923,11 +6919,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   grafana-overview.json: |-
@@ -7549,8 +7545,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-k8s-coredns
+  namespace: backstage
+  name: prometheus-stack-kube-prom-k8s-coredns
   annotations:
     {}
   labels:
@@ -7558,11 +7554,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   k8s-coredns.json: |-
@@ -9083,8 +9079,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-k8s-resources-cluster
+  namespace: backstage
+  name: prometheus-stack-kube-prom-k8s-resources-cluster
   annotations:
     {}
   labels:
@@ -9092,11 +9088,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   k8s-resources-cluster.json: |-
@@ -12170,8 +12166,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-k8s-resources-namespace
+  namespace: backstage
+  name: prometheus-stack-kube-prom-k8s-resources-namespace
   annotations:
     {}
   labels:
@@ -12179,11 +12175,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   k8s-resources-namespace.json: |-
@@ -14966,8 +14962,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-k8s-resources-node
+  namespace: backstage
+  name: prometheus-stack-kube-prom-k8s-resources-node
   annotations:
     {}
   labels:
@@ -14975,11 +14971,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   k8s-resources-node.json: |-
@@ -15991,8 +15987,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-k8s-resources-pod
+  namespace: backstage
+  name: prometheus-stack-kube-prom-k8s-resources-pod
   annotations:
     {}
   labels:
@@ -16000,11 +15996,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   k8s-resources-pod.json: |-
@@ -18459,8 +18455,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-k8s-resources-workload
+  namespace: backstage
+  name: prometheus-stack-kube-prom-k8s-resources-workload
   annotations:
     {}
   labels:
@@ -18468,11 +18464,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   k8s-resources-workload.json: |-
@@ -20482,8 +20478,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-k8s-resources-workloads-namespace
+  namespace: backstage
+  name: prometheus-stack-kube-prom-k8s-resources-workloads-namespace
   annotations:
     {}
   labels:
@@ -20491,11 +20487,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   k8s-resources-workloads-namespace.json: |-
@@ -22670,8 +22666,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-kubelet
+  namespace: backstage
+  name: prometheus-stack-kube-prom-kubelet
   annotations:
     {}
   labels:
@@ -22679,11 +22675,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   kubelet.json: |-
@@ -24923,8 +24919,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-namespace-by-pod
+  namespace: backstage
+  name: prometheus-stack-kube-prom-namespace-by-pod
   annotations:
     {}
   labels:
@@ -24932,11 +24928,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   namespace-by-pod.json: |-
@@ -26386,8 +26382,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-namespace-by-workload
+  namespace: backstage
+  name: prometheus-stack-kube-prom-namespace-by-workload
   annotations:
     {}
   labels:
@@ -26395,11 +26391,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   namespace-by-workload.json: |-
@@ -28121,8 +28117,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-node-cluster-rsrc-use
+  namespace: backstage
+  name: prometheus-stack-kube-prom-node-cluster-rsrc-use
   annotations:
     {}
   labels:
@@ -28130,11 +28126,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   node-cluster-rsrc-use.json: |-
@@ -29183,8 +29179,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-node-rsrc-use
+  namespace: backstage
+  name: prometheus-stack-kube-prom-node-rsrc-use
   annotations:
     {}
   labels:
@@ -29192,11 +29188,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   node-rsrc-use.json: |-
@@ -30271,8 +30267,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-nodes-darwin
+  namespace: backstage
+  name: prometheus-stack-kube-prom-nodes-darwin
   annotations:
     {}
   labels:
@@ -30280,11 +30276,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   nodes-darwin.json: |-
@@ -31343,8 +31339,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-nodes
+  namespace: backstage
+  name: prometheus-stack-kube-prom-nodes
   annotations:
     {}
   labels:
@@ -31352,11 +31348,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   nodes.json: |-
@@ -32408,8 +32404,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-persistentvolumesusage
+  namespace: backstage
+  name: prometheus-stack-kube-prom-persistentvolumesusage
   annotations:
     {}
   labels:
@@ -32417,11 +32413,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   persistentvolumesusage.json: |-
@@ -32994,8 +32990,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-pod-total
+  namespace: backstage
+  name: prometheus-stack-kube-prom-pod-total
   annotations:
     {}
   labels:
@@ -33003,11 +32999,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   pod-total.json: |-
@@ -34221,8 +34217,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-prometheus
+  namespace: backstage
+  name: prometheus-stack-kube-prom-prometheus
   annotations:
     {}
   labels:
@@ -34230,11 +34226,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   prometheus.json: |-
@@ -35455,8 +35451,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-proxy
+  namespace: backstage
+  name: prometheus-stack-kube-prom-proxy
   annotations:
     {}
   labels:
@@ -35464,11 +35460,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   proxy.json: |-
@@ -36725,8 +36721,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-scheduler
+  namespace: backstage
+  name: prometheus-stack-kube-prom-scheduler
   annotations:
     {}
   labels:
@@ -36734,11 +36730,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   scheduler.json: |-
@@ -37836,8 +37832,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: monitoring
-  name: prometheus-kube-prometheus-workload-total
+  namespace: backstage
+  name: prometheus-stack-kube-prom-workload-total
   annotations:
     {}
   labels:
@@ -37845,11 +37841,11 @@ metadata:
     app: kube-prometheus-stack-grafana
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 data:
   workload-total.json: |-
@@ -39276,10 +39272,10 @@ metadata:
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
-  name: prometheus-grafana-clusterrole
+  name: prometheus-stack-grafana-clusterrole
 rules:
   - apiGroups: [""] # "" indicates the core API group
     resources: ["configmaps", "secrets"]
@@ -39295,10 +39291,10 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "2.7.0"
-    release: prometheus
-  name: prometheus-kube-state-metrics
+    release: prometheus-stack
+  name: prometheus-stack-kube-state-metrics
 rules:
 
 - apiGroups: ["certificates.k8s.io"]
@@ -39445,16 +39441,16 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: prometheus-kube-prometheus-operator
+  name: prometheus-stack-kube-prom-operator
   labels:
     app: kube-prometheus-stack-operator
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 rules:
 - apiGroups:
@@ -39533,16 +39529,16 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: prometheus-kube-prometheus-prometheus
+  name: prometheus-stack-kube-prom-prometheus
   labels:
     app: kube-prometheus-stack-prometheus
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 rules:
 # This permission are not in the kube-prometheus repo
@@ -39567,20 +39563,20 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: prometheus-grafana-clusterrolebinding
+  name: prometheus-stack-grafana-clusterrolebinding
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 subjects:
   - kind: ServiceAccount
-    name: prometheus-grafana
-    namespace: monitoring
+    name: prometheus-stack-grafana
+    namespace: backstage
 roleRef:
   kind: ClusterRole
-  name: prometheus-grafana-clusterrole
+  name: prometheus-stack-grafana-clusterrole
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: kube-prometheus-stack/charts/kube-state-metrics/templates/clusterrolebinding.yaml
@@ -39593,77 +39589,77 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "2.7.0"
-    release: prometheus
-  name: prometheus-kube-state-metrics
+    release: prometheus-stack
+  name: prometheus-stack-kube-state-metrics
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus-kube-state-metrics
+  name: prometheus-stack-kube-state-metrics
 subjects:
 - kind: ServiceAccount
-  name: prometheus-kube-state-metrics
-  namespace: monitoring
+  name: prometheus-stack-kube-state-metrics
+  namespace: backstage
 ---
 # Source: kube-prometheus-stack/templates/prometheus-operator/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: prometheus-kube-prometheus-operator
+  name: prometheus-stack-kube-prom-operator
   labels:
     app: kube-prometheus-stack-operator
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus-kube-prometheus-operator
+  name: prometheus-stack-kube-prom-operator
 subjects:
 - kind: ServiceAccount
-  name: prometheus-kube-prometheus-operator
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-operator
+  namespace: backstage
 ---
 # Source: kube-prometheus-stack/templates/prometheus/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: prometheus-kube-prometheus-prometheus
+  name: prometheus-stack-kube-prom-prometheus
   labels:
     app: kube-prometheus-stack-prometheus
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus-kube-prometheus-prometheus
+  name: prometheus-stack-kube-prom-prometheus
 subjects:
   - kind: ServiceAccount
-    name: prometheus-kube-prometheus-prometheus
-    namespace: monitoring
+    name: prometheus-stack-kube-prom-prometheus
+    namespace: backstage
 ---
 # Source: kube-prometheus-stack/charts/grafana/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 rules: []
@@ -39672,33 +39668,33 @@ rules: []
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: prometheus-grafana
+  name: prometheus-stack-grafana
 subjects:
 - kind: ServiceAccount
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
 ---
 # Source: kube-prometheus-stack/charts/grafana/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -39710,23 +39706,23 @@ spec:
       targetPort: 3000
   selector:
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
 ---
 # Source: kube-prometheus-stack/charts/kube-state-metrics/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-state-metrics
-  namespace: monitoring
+  name: prometheus-stack-kube-state-metrics
+  namespace: backstage
   labels:    
     helm.sh/chart: kube-state-metrics-4.24.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "2.7.0"
-    release: prometheus
+    release: prometheus-stack
   annotations:
     prometheus.io/scrape: 'true'
 spec:
@@ -39739,24 +39735,24 @@ spec:
   
   selector:    
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
 ---
 # Source: kube-prometheus-stack/charts/prometheus-node-exporter/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-prometheus-node-exporter
-  namespace: monitoring
+  name: prometheus-stack-prometheus-node-exporter
+  namespace: backstage
   labels:
     helm.sh/chart: prometheus-node-exporter-4.8.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: prometheus-node-exporter
     app.kubernetes.io/name: prometheus-node-exporter
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "1.5.0"
     jobLabel: node-exporter
-    release: prometheus
+    release: prometheus-stack
   annotations:
     prometheus.io/scrape: "true"
 spec:
@@ -39768,24 +39764,24 @@ spec:
       name: http-metrics
   selector:
     app.kubernetes.io/name: prometheus-node-exporter
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
 ---
 # Source: kube-prometheus-stack/templates/alertmanager/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-alertmanager
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-alertmanager
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-alertmanager
     self-monitor: "true"
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   ports:
@@ -39795,24 +39791,24 @@ spec:
     protocol: TCP
   selector:
     app.kubernetes.io/name: alertmanager
-    alertmanager: prometheus-kube-prometheus-alertmanager
+    alertmanager: prometheus-stack-kube-prom-alertmanager
   type: "ClusterIP"
 ---
 # Source: kube-prometheus-stack/templates/exporters/core-dns/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-coredns
+  name: prometheus-stack-kube-prom-coredns
   labels:
     app: kube-prometheus-stack-coredns
     jobLabel: coredns
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
   namespace: kube-system
 spec:
@@ -39829,17 +39825,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-kube-controller-manager
+  name: prometheus-stack-kube-prom-kube-controller-manager
   labels:
     app: kube-prometheus-stack-kube-controller-manager
     jobLabel: kube-controller-manager
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
   namespace: kube-system
 spec:
@@ -39857,17 +39853,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-kube-etcd
+  name: prometheus-stack-kube-prom-kube-etcd
   labels:
     app: kube-prometheus-stack-kube-etcd
     jobLabel: kube-etcd
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
   namespace: kube-system
 spec:
@@ -39885,17 +39881,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-kube-proxy
+  name: prometheus-stack-kube-prom-kube-proxy
   labels:
     app: kube-prometheus-stack-kube-proxy
     jobLabel: kube-proxy
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
   namespace: kube-system
 spec:
@@ -39913,17 +39909,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-kube-scheduler
+  name: prometheus-stack-kube-prom-kube-scheduler
   labels:
     app: kube-prometheus-stack-kube-scheduler
     jobLabel: kube-scheduler
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
   namespace: kube-system
 spec:
@@ -39941,17 +39937,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-operator
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-operator
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-operator
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   ports:
@@ -39960,25 +39956,25 @@ spec:
     targetPort: https
   selector:
     app: kube-prometheus-stack-operator
-    release: "prometheus"
+    release: "prometheus-stack"
   type: "ClusterIP"
 ---
 # Source: kube-prometheus-stack/templates/prometheus/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-prometheus
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-prometheus
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-prometheus
     self-monitor: "true"
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   ports:
@@ -39988,30 +39984,30 @@ spec:
   publishNotReadyAddresses: false
   selector:
     app.kubernetes.io/name: prometheus
-    prometheus: prometheus-kube-prometheus-prometheus
+    prometheus: prometheus-stack-kube-prom-prometheus
   type: "ClusterIP"
 ---
 # Source: kube-prometheus-stack/charts/prometheus-node-exporter/templates/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: prometheus-prometheus-node-exporter
-  namespace: monitoring
+  name: prometheus-stack-prometheus-node-exporter
+  namespace: backstage
   labels:
     helm.sh/chart: prometheus-node-exporter-4.8.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: prometheus-node-exporter
     app.kubernetes.io/name: prometheus-node-exporter
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "1.5.0"
     jobLabel: node-exporter
-    release: prometheus
+    release: prometheus-stack
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: prometheus-node-exporter
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: prometheus-stack
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 1
@@ -40026,10 +40022,10 @@ spec:
         app.kubernetes.io/component: metrics
         app.kubernetes.io/part-of: prometheus-node-exporter
         app.kubernetes.io/name: prometheus-node-exporter
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: prometheus-stack
         app.kubernetes.io/version: "1.5.0"
         jobLabel: node-exporter
-        release: prometheus
+        release: prometheus-stack
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -40037,7 +40033,7 @@ spec:
         runAsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-      serviceAccountName: prometheus-prometheus-node-exporter
+      serviceAccountName: prometheus-stack-prometheus-node-exporter
       containers:
         - name: node-exporter
           image: quay.io/prometheus/node-exporter:v1.5.0
@@ -40109,12 +40105,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -40123,22 +40119,22 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: grafana
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: prometheus-stack
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
         app.kubernetes.io/name: grafana
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: prometheus-stack
       annotations:
-        checksum/config: 1df588f4d563647173094cecc002e8cd10b16b31638af97668b324d454e73174
+        checksum/config: c8dacaf37cd089651ff2d640bc364017790d51a332edd69e1bc44923e98accf4
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/sc-dashboard-provider-config: 1012040c4dc382e24e91ceca90fdd1a1bd27fcac10ca90062659fe27ab4b056e
-        checksum/secret: 0561ba8766a1490ef874050dd0067156ad16890e01cef01b22f48c7574165492
+        checksum/sc-dashboard-provider-config: af70b3a84d5fe17a22f82ca0da943b1b850ab16400043ebcacaec5ddb254bc57
+        checksum/secret: 914931ecb5b0cc66d394a51a8a76df64ffd94562f183a5e07535574366093967
     spec:
       
-      serviceAccountName: prometheus-grafana
+      serviceAccountName: prometheus-stack-grafana
       automountServiceAccountToken: true
       securityContext:
         fsGroup: 472
@@ -40180,12 +40176,12 @@ spec:
             - name: REQ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: prometheus-grafana
+                  name: prometheus-stack-grafana
                   key: admin-user
             - name: REQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: prometheus-grafana
+                  name: prometheus-stack-grafana
                   key: admin-password
             - name: REQ_URL
               value: http://localhost:3000/api/admin/provisioning/datasources/reload
@@ -40218,12 +40214,12 @@ spec:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: prometheus-grafana
+                  name: prometheus-stack-grafana
                   key: admin-user
             - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: prometheus-grafana
+                  name: prometheus-stack-grafana
                   key: admin-password
             - name: GF_PATHS_DATA
               value: /var/lib/grafana/
@@ -40247,7 +40243,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: prometheus-grafana
+            name: prometheus-stack-grafana
         - name: storage
           emptyDir: {}
         - name: sc-dashboard-volume
@@ -40255,7 +40251,7 @@ spec:
             {}
         - name: sc-dashboard-provider
           configMap:
-            name: prometheus-grafana-config-dashboards
+            name: prometheus-stack-grafana-config-dashboards
         - name: sc-datasources-volume
           emptyDir:
             {}
@@ -40264,22 +40260,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus-kube-state-metrics
-  namespace: monitoring
+  name: prometheus-stack-kube-state-metrics
+  namespace: backstage
   labels:    
     helm.sh/chart: kube-state-metrics-4.24.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "2.7.0"
-    release: prometheus
+    release: prometheus-stack
 spec:
   selector:
     matchLabels:      
       app.kubernetes.io/name: kube-state-metrics
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: prometheus-stack
   replicas: 1
   template:
     metadata:
@@ -40289,12 +40285,12 @@ spec:
         app.kubernetes.io/component: metrics
         app.kubernetes.io/part-of: kube-state-metrics
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: prometheus-stack
         app.kubernetes.io/version: "2.7.0"
-        release: prometheus
+        release: prometheus-stack
     spec:
       hostNetwork: false
-      serviceAccountName: prometheus-kube-state-metrics
+      serviceAccountName: prometheus-stack-kube-state-metrics
       securityContext:
         fsGroup: 65534
         runAsGroup: 65534
@@ -40326,35 +40322,35 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus-kube-prometheus-operator
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-operator
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-operator
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: kube-prometheus-stack-operator
-      release: "prometheus"
+      release: "prometheus-stack"
   template:
     metadata:
       labels:
         app: kube-prometheus-stack-operator
         
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: prometheus-stack
         app.kubernetes.io/version: "42.2.1"
         app.kubernetes.io/part-of: kube-prometheus-stack
         chart: kube-prometheus-stack-42.2.1
-        release: "prometheus"
+        release: "prometheus-stack"
         heritage: "Helm"
     spec:
       containers:
@@ -40362,7 +40358,7 @@ spec:
           image: "quay.io/prometheus-operator/prometheus-operator:v0.60.1"
           imagePullPolicy: "IfNotPresent"
           args:
-            - --kubelet-service=kube-system/prometheus-kube-prometheus-kubelet
+            - --kubelet-service=kube-system/prometheus-stack-kube-prom-kubelet
             - --localhost=127.0.0.1
             - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.60.1
             - --config-reloader-cpu-request=200m
@@ -40391,37 +40387,37 @@ spec:
         - name: tls-secret
           secret:
             defaultMode: 420
-            secretName: prometheus-kube-prometheus-admission
+            secretName: prometheus-stack-kube-prom-admission
       securityContext:
         fsGroup: 65534
         runAsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-      serviceAccountName: prometheus-kube-prometheus-operator
+      serviceAccountName: prometheus-stack-kube-prom-operator
 ---
 # Source: kube-prometheus-stack/templates/alertmanager/alertmanager.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager
 metadata:
-  name: prometheus-kube-prometheus-alertmanager
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-alertmanager
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-alertmanager
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   image: "quay.io/prometheus/alertmanager:v0.24.0"
   version: v0.24.0
   replicas: 1
   listenLocal: false
-  serviceAccountName: prometheus-kube-prometheus-alertmanager
-  externalUrl: http://prometheus-kube-prometheus-alertmanager.monitoring:9093
+  serviceAccountName: prometheus-stack-kube-prom-alertmanager
+  externalUrl: http://prometheus-stack-kube-prom-alertmanager.backstage:9093
   paused: false
   logFormat: "logfmt"
   logLevel:  "info"
@@ -40440,15 +40436,15 @@ spec:
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
-  name:  prometheus-kube-prometheus-admission
+  name:  prometheus-stack-kube-prom-admission
   labels:
     app: kube-prometheus-stack-admission    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 webhooks:
   - name: prometheusrulemutate.monitoring.coreos.com
@@ -40465,8 +40461,8 @@ webhooks:
           - UPDATE
     clientConfig:
       service:
-        namespace: monitoring
-        name: prometheus-kube-prometheus-operator
+        namespace: backstage
+        name: prometheus-stack-kube-prom-operator
         path: /admission-prometheusrules/mutate
     timeoutSeconds: 10
     admissionReviewVersions: ["v1", "v1beta1"]
@@ -40476,29 +40472,29 @@ webhooks:
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
-  name: prometheus-kube-prometheus-prometheus
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-prometheus
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-prometheus
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   alerting:
     alertmanagers:
-      - namespace: monitoring
-        name: prometheus-kube-prometheus-alertmanager
+      - namespace: backstage
+        name: prometheus-stack-kube-prom-alertmanager
         port: http-web
         pathPrefix: "/"
         apiVersion: v2
   image: "quay.io/prometheus/prometheus:v2.39.1"
   version: v2.39.1
-  externalUrl: http://prometheus-kube-prometheus-prometheus.monitoring:9090
+  externalUrl: http://prometheus-stack-kube-prom-prometheus.backstage:9090
   paused: false
   replicas: 1
   shards: 1
@@ -40509,20 +40505,20 @@ spec:
   retention: "10d"
   walCompression: true
   routePrefix: "/"
-  serviceAccountName: prometheus-kube-prometheus-prometheus
+  serviceAccountName: prometheus-stack-kube-prom-prometheus
   serviceMonitorSelector:
     matchLabels:
-      release: "prometheus"
+      release: "prometheus-stack"
 
   serviceMonitorNamespaceSelector: {}
   podMonitorSelector:
     matchLabels:
-      release: "prometheus"
+      release: "prometheus-stack"
 
   podMonitorNamespaceSelector: {}
   probeSelector:
     matchLabels:
-      release: "prometheus"
+      release: "prometheus-stack"
 
   probeNamespaceSelector: {}
   securityContext:
@@ -40533,7 +40529,7 @@ spec:
   ruleNamespaceSelector: {}
   ruleSelector:
     matchLabels:
-      release: "prometheus"
+      release: "prometheus-stack"
 
   portName: http-web
   hostNetwork: false
@@ -40542,17 +40538,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-alertmanager.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-alertmanager.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -40566,7 +40562,7 @@ spec:
       expr: |-
         # Without max_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-        max_over_time(alertmanager_config_last_reload_successful{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}[5m]) == 0
+        max_over_time(alertmanager_config_last_reload_successful{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}[5m]) == 0
       for: 10m
       labels:
         severity: critical
@@ -40578,9 +40574,9 @@ spec:
       expr: |-
         # Without max_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-          max_over_time(alertmanager_cluster_members{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}[5m])
+          max_over_time(alertmanager_cluster_members{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}[5m])
         < on (namespace,service) group_left
-          count by (namespace,service) (max_over_time(alertmanager_cluster_members{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}[5m]))
+          count by (namespace,service) (max_over_time(alertmanager_cluster_members{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}[5m]))
       for: 15m
       labels:
         severity: critical
@@ -40591,9 +40587,9 @@ spec:
         summary: An Alertmanager instance failed to send notifications.
       expr: |-
         (
-          rate(alertmanager_notifications_failed_total{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}[5m])
+          rate(alertmanager_notifications_failed_total{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}[5m])
         /
-          rate(alertmanager_notifications_total{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}[5m])
+          rate(alertmanager_notifications_total{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}[5m])
         )
         > 0.01
       for: 5m
@@ -40606,9 +40602,9 @@ spec:
         summary: All Alertmanager instances in a cluster failed to send notifications to a critical integration.
       expr: |-
         min by (namespace,service, integration) (
-          rate(alertmanager_notifications_failed_total{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring", integration=~`.*`}[5m])
+          rate(alertmanager_notifications_failed_total{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage", integration=~`.*`}[5m])
         /
-          rate(alertmanager_notifications_total{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring", integration=~`.*`}[5m])
+          rate(alertmanager_notifications_total{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage", integration=~`.*`}[5m])
         )
         > 0.01
       for: 5m
@@ -40621,9 +40617,9 @@ spec:
         summary: All Alertmanager instances in a cluster failed to send notifications to a non-critical integration.
       expr: |-
         min by (namespace,service, integration) (
-          rate(alertmanager_notifications_failed_total{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring", integration!~`.*`}[5m])
+          rate(alertmanager_notifications_failed_total{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage", integration!~`.*`}[5m])
         /
-          rate(alertmanager_notifications_total{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring", integration!~`.*`}[5m])
+          rate(alertmanager_notifications_total{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage", integration!~`.*`}[5m])
         )
         > 0.01
       for: 5m
@@ -40636,7 +40632,7 @@ spec:
         summary: Alertmanager instances within the same cluster have different configurations.
       expr: |-
         count by (namespace,service) (
-          count_values by (namespace,service) ("config_hash", alertmanager_config_hash{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"})
+          count_values by (namespace,service) ("config_hash", alertmanager_config_hash{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"})
         )
         != 1
       for: 20m
@@ -40650,11 +40646,11 @@ spec:
       expr: |-
         (
           count by (namespace,service) (
-            avg_over_time(up{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}[5m]) < 0.5
+            avg_over_time(up{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}[5m]) < 0.5
           )
         /
           count by (namespace,service) (
-            up{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}
+            up{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}
           )
         )
         >= 0.5
@@ -40669,11 +40665,11 @@ spec:
       expr: |-
         (
           count by (namespace,service) (
-            changes(process_start_time_seconds{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}[10m]) > 4
+            changes(process_start_time_seconds{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}[10m]) > 4
           )
         /
           count by (namespace,service) (
-            up{job="prometheus-kube-prometheus-alertmanager",namespace="monitoring"}
+            up{job="prometheus-stack-kube-prom-alertmanager",namespace="backstage"}
           )
         )
         >= 0.5
@@ -40685,17 +40681,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-config-reloaders
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-config-reloaders
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -40717,17 +40713,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-etcd
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-etcd
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -40885,17 +40881,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-general.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-general.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -40953,17 +40949,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-k8s.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-k8s.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41120,17 +41116,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-apiserver-availability.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-apiserver-availability.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41250,17 +41246,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-apiserver-burnrate.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-apiserver-burnrate.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41572,17 +41568,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-apiserver-histogram.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-apiserver-histogram.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41603,17 +41599,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-apiserver-slos
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-apiserver-slos
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41680,17 +41676,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-prometheus-general.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-prometheus-general.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41705,17 +41701,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-prometheus-node-recording.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-prometheus-node-recording.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41738,17 +41734,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-scheduler.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-scheduler.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41795,17 +41791,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kube-state-metrics
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-state-metrics
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41864,17 +41860,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubelet.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubelet.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -41897,17 +41893,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-apps
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-apps
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42145,17 +42141,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-resources
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-resources
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42268,17 +42264,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-storage
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-storage
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42382,17 +42378,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-system-apiserver
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-system-apiserver
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42456,17 +42452,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-system-controller-manager
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-system-controller-manager
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42486,17 +42482,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-system-kube-proxy
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-system-kube-proxy
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42516,17 +42512,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-system-kubelet
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-system-kubelet
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42657,17 +42653,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-system-scheduler
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-system-scheduler
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42687,17 +42683,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-kubernetes-system
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubernetes-system
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42730,17 +42726,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-node-exporter.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-node-exporter.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -42813,17 +42809,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-node-exporter
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-node-exporter
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -43061,17 +43057,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-node-network
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-node-network
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -43091,17 +43087,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-node.rules
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-node.rules
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -43140,17 +43136,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-prometheus-operator
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-prometheus-operator
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -43161,7 +43157,7 @@ spec:
         description: Errors while performing List operations in controller {{$labels.controller}} in {{$labels.namespace}} namespace.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus-operator/prometheusoperatorlisterrors
         summary: Errors while performing list operations in controller.
-      expr: (sum by (controller,namespace) (rate(prometheus_operator_list_operations_failed_total{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[10m])) / sum by (controller,namespace) (rate(prometheus_operator_list_operations_total{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[10m]))) > 0.4
+      expr: (sum by (controller,namespace) (rate(prometheus_operator_list_operations_failed_total{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[10m])) / sum by (controller,namespace) (rate(prometheus_operator_list_operations_total{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[10m]))) > 0.4
       for: 15m
       labels:
         severity: warning
@@ -43170,7 +43166,7 @@ spec:
         description: Errors while performing watch operations in controller {{$labels.controller}} in {{$labels.namespace}} namespace.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus-operator/prometheusoperatorwatcherrors
         summary: Errors while performing watch operations in controller.
-      expr: (sum by (controller,namespace) (rate(prometheus_operator_watch_operations_failed_total{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m])) / sum by (controller,namespace) (rate(prometheus_operator_watch_operations_total{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m]))) > 0.4
+      expr: (sum by (controller,namespace) (rate(prometheus_operator_watch_operations_failed_total{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m])) / sum by (controller,namespace) (rate(prometheus_operator_watch_operations_total{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m]))) > 0.4
       for: 15m
       labels:
         severity: warning
@@ -43179,7 +43175,7 @@ spec:
         description: Controller {{ $labels.controller }} in {{ $labels.namespace }} namespace fails to reconcile {{ $value }} objects.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus-operator/prometheusoperatorsyncfailed
         summary: Last controller reconciliation failed
-      expr: min_over_time(prometheus_operator_syncs{status="failed",job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m]) > 0
+      expr: min_over_time(prometheus_operator_syncs{status="failed",job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m]) > 0
       for: 10m
       labels:
         severity: warning
@@ -43188,7 +43184,7 @@ spec:
         description: '{{ $value | humanizePercentage }} of reconciling operations failed for {{ $labels.controller }} controller in {{ $labels.namespace }} namespace.'
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus-operator/prometheusoperatorreconcileerrors
         summary: Errors while reconciling controller.
-      expr: (sum by (controller,namespace) (rate(prometheus_operator_reconcile_errors_total{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m]))) / (sum by (controller,namespace) (rate(prometheus_operator_reconcile_operations_total{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m]))) > 0.1
+      expr: (sum by (controller,namespace) (rate(prometheus_operator_reconcile_errors_total{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m]))) / (sum by (controller,namespace) (rate(prometheus_operator_reconcile_operations_total{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m]))) > 0.1
       for: 10m
       labels:
         severity: warning
@@ -43197,7 +43193,7 @@ spec:
         description: Errors while reconciling Prometheus in {{ $labels.namespace }} Namespace.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus-operator/prometheusoperatornodelookuperrors
         summary: Errors while reconciling Prometheus.
-      expr: rate(prometheus_operator_node_address_lookup_errors_total{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m]) > 0.1
+      expr: rate(prometheus_operator_node_address_lookup_errors_total{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m]) > 0.1
       for: 10m
       labels:
         severity: warning
@@ -43206,7 +43202,7 @@ spec:
         description: Prometheus operator in {{ $labels.namespace }} namespace isn't ready to reconcile {{ $labels.controller }} resources.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus-operator/prometheusoperatornotready
         summary: Prometheus operator not ready
-      expr: min by (controller,namespace) (max_over_time(prometheus_operator_ready{job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m]) == 0)
+      expr: min by (controller,namespace) (max_over_time(prometheus_operator_ready{job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m]) == 0)
       for: 5m
       labels:
         severity: warning
@@ -43215,7 +43211,7 @@ spec:
         description: Prometheus operator in {{ $labels.namespace }} namespace rejected {{ printf "%0.0f" $value }} {{ $labels.controller }}/{{ $labels.resource }} resources.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus-operator/prometheusoperatorrejectedresources
         summary: Resources rejected by Prometheus operator
-      expr: min_over_time(prometheus_operator_managed_resources{state="rejected",job="prometheus-kube-prometheus-operator",namespace="monitoring"}[5m]) > 0
+      expr: min_over_time(prometheus_operator_managed_resources{state="rejected",job="prometheus-stack-kube-prom-operator",namespace="backstage"}[5m]) > 0
       for: 5m
       labels:
         severity: warning
@@ -43224,17 +43220,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-kube-prometheus-prometheus
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-prometheus
+  namespace: backstage
   labels:
     app: kube-prometheus-stack
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   groups:
@@ -43248,7 +43244,7 @@ spec:
       expr: |-
         # Without max_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-        max_over_time(prometheus_config_last_reload_successful{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) == 0
+        max_over_time(prometheus_config_last_reload_successful{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) == 0
       for: 10m
       labels:
         severity: critical
@@ -43261,9 +43257,9 @@ spec:
         # Without min_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
         (
-          predict_linear(prometheus_notifications_queue_length{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m], 60 * 30)
+          predict_linear(prometheus_notifications_queue_length{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m], 60 * 30)
         >
-          min_over_time(prometheus_notifications_queue_capacity{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m])
+          min_over_time(prometheus_notifications_queue_capacity{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m])
         )
       for: 15m
       labels:
@@ -43275,9 +43271,9 @@ spec:
         summary: Prometheus has encountered more than 1% errors sending alerts to a specific Alertmanager.
       expr: |-
         (
-          rate(prometheus_notifications_errors_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m])
+          rate(prometheus_notifications_errors_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m])
         /
-          rate(prometheus_notifications_sent_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m])
+          rate(prometheus_notifications_sent_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m])
         )
         * 100
         > 1
@@ -43292,7 +43288,7 @@ spec:
       expr: |-
         # Without max_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-        max_over_time(prometheus_notifications_alertmanagers_discovered{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) < 1
+        max_over_time(prometheus_notifications_alertmanagers_discovered{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) < 1
       for: 10m
       labels:
         severity: warning
@@ -43301,7 +43297,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has detected {{$value | humanize}} reload failures over the last 3h.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustsdbreloadsfailing
         summary: Prometheus has issues reloading blocks from disk.
-      expr: increase(prometheus_tsdb_reloads_failures_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[3h]) > 0
+      expr: increase(prometheus_tsdb_reloads_failures_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[3h]) > 0
       for: 4h
       labels:
         severity: warning
@@ -43310,7 +43306,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has detected {{$value | humanize}} compaction failures over the last 3h.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustsdbcompactionsfailing
         summary: Prometheus has issues compacting blocks.
-      expr: increase(prometheus_tsdb_compactions_failed_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[3h]) > 0
+      expr: increase(prometheus_tsdb_compactions_failed_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[3h]) > 0
       for: 4h
       labels:
         severity: warning
@@ -43321,12 +43317,12 @@ spec:
         summary: Prometheus is not ingesting samples.
       expr: |-
         (
-          rate(prometheus_tsdb_head_samples_appended_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) <= 0
+          rate(prometheus_tsdb_head_samples_appended_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) <= 0
         and
           (
-            sum without(scrape_job) (prometheus_target_metadata_cache_entries{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}) > 0
+            sum without(scrape_job) (prometheus_target_metadata_cache_entries{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}) > 0
           or
-            sum without(rule_group) (prometheus_rule_group_rules{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}) > 0
+            sum without(rule_group) (prometheus_rule_group_rules{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}) > 0
           )
         )
       for: 10m
@@ -43337,7 +43333,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is dropping {{ printf "%.4g" $value  }} samples/s with different values but duplicated timestamp.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusduplicatetimestamps
         summary: Prometheus is dropping samples with duplicate timestamps.
-      expr: rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 10m
       labels:
         severity: warning
@@ -43346,7 +43342,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is dropping {{ printf "%.4g" $value  }} samples/s with timestamps arriving out of order.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusoutofordertimestamps
         summary: Prometheus drops samples with out-of-order timestamps.
-      expr: rate(prometheus_target_scrapes_sample_out_of_order_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: rate(prometheus_target_scrapes_sample_out_of_order_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 10m
       labels:
         severity: warning
@@ -43357,12 +43353,12 @@ spec:
         summary: Prometheus fails to send samples to remote storage.
       expr: |-
         (
-          (rate(prometheus_remote_storage_failed_samples_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]))
+          (rate(prometheus_remote_storage_failed_samples_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]))
         /
           (
-            (rate(prometheus_remote_storage_failed_samples_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]))
+            (rate(prometheus_remote_storage_failed_samples_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]))
           +
-            (rate(prometheus_remote_storage_succeeded_samples_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) or rate(prometheus_remote_storage_samples_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]))
+            (rate(prometheus_remote_storage_succeeded_samples_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) or rate(prometheus_remote_storage_samples_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]))
           )
         )
         * 100
@@ -43379,9 +43375,9 @@ spec:
         # Without max_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
         (
-          max_over_time(prometheus_remote_storage_highest_timestamp_in_seconds{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m])
+          max_over_time(prometheus_remote_storage_highest_timestamp_in_seconds{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m])
         - ignoring(remote_name, url) group_right
-          max_over_time(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m])
+          max_over_time(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m])
         )
         > 120
       for: 15m
@@ -43389,16 +43385,16 @@ spec:
         severity: critical
     - alert: PrometheusRemoteWriteDesiredShards
       annotations:
-        description: Prometheus {{$labels.namespace}}/{{$labels.pod}} remote write desired shards calculation wants to run {{ $value }} shards for queue {{ $labels.remote_name}}:{{ $labels.url }}, which is more than the max of {{ printf `prometheus_remote_storage_shards_max{instance="%s",job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}` $labels.instance | query | first | value }}.
+        description: Prometheus {{$labels.namespace}}/{{$labels.pod}} remote write desired shards calculation wants to run {{ $value }} shards for queue {{ $labels.remote_name}}:{{ $labels.url }}, which is more than the max of {{ printf `prometheus_remote_storage_shards_max{instance="%s",job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}` $labels.instance | query | first | value }}.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusremotewritedesiredshards
         summary: Prometheus remote write desired shards calculation wants to run more than configured max shards.
       expr: |-
         # Without max_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
         (
-          max_over_time(prometheus_remote_storage_shards_desired{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m])
+          max_over_time(prometheus_remote_storage_shards_desired{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m])
         >
-          max_over_time(prometheus_remote_storage_shards_max{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m])
+          max_over_time(prometheus_remote_storage_shards_max{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m])
         )
       for: 15m
       labels:
@@ -43408,7 +43404,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to evaluate {{ printf "%.0f" $value }} rules in the last 5m.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusrulefailures
         summary: Prometheus is failing rule evaluations.
-      expr: increase(prometheus_rule_evaluation_failures_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: increase(prometheus_rule_evaluation_failures_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 15m
       labels:
         severity: critical
@@ -43417,7 +43413,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has missed {{ printf "%.0f" $value }} rule group evaluations in the last 5m.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusmissingruleevaluations
         summary: Prometheus is missing rule evaluations due to slow rule group evaluation.
-      expr: increase(prometheus_rule_group_iterations_missed_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: increase(prometheus_rule_group_iterations_missed_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 15m
       labels:
         severity: warning
@@ -43426,7 +43422,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has dropped {{ printf "%.0f" $value }} targets because the number of targets exceeded the configured target_limit.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustargetlimithit
         summary: Prometheus has dropped targets because some scrape configs have exceeded the targets limit.
-      expr: increase(prometheus_target_scrape_pool_exceeded_target_limit_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: increase(prometheus_target_scrape_pool_exceeded_target_limit_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 15m
       labels:
         severity: warning
@@ -43435,7 +43431,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has dropped {{ printf "%.0f" $value }} targets because some samples exceeded the configured label_limit, label_name_length_limit or label_value_length_limit.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheuslabellimithit
         summary: Prometheus has dropped targets because some scrape configs have exceeded the labels limit.
-      expr: increase(prometheus_target_scrape_pool_exceeded_label_limits_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: increase(prometheus_target_scrape_pool_exceeded_label_limits_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 15m
       labels:
         severity: warning
@@ -43444,7 +43440,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed {{ printf "%.0f" $value }} scrapes in the last 5m because some targets exceeded the configured body_size_limit.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusscrapebodysizelimithit
         summary: Prometheus has dropped some targets that exceeded body size limit.
-      expr: increase(prometheus_target_scrapes_exceeded_body_size_limit_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: increase(prometheus_target_scrapes_exceeded_body_size_limit_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 15m
       labels:
         severity: warning
@@ -43453,7 +43449,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed {{ printf "%.0f" $value }} scrapes in the last 5m because some targets exceeded the configured sample_limit.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusscrapesamplelimithit
         summary: Prometheus has failed scrapes that have exceeded the configured sample limit.
-      expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0
+      expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0
       for: 15m
       labels:
         severity: warning
@@ -43462,7 +43458,7 @@ spec:
         description: '{{ printf "%.0f" $value }} targets in Prometheus {{$labels.namespace}}/{{$labels.pod}} have failed to sync because invalid configuration was supplied.'
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustargetsyncfailure
         summary: Prometheus has failed to sync targets.
-      expr: increase(prometheus_target_sync_failed_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[30m]) > 0
+      expr: increase(prometheus_target_sync_failed_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[30m]) > 0
       for: 5m
       labels:
         severity: critical
@@ -43471,7 +43467,7 @@ spec:
         description: Prometheus {{$labels.namespace}}/{{$labels.pod}} query API has less than 20% available capacity in its query engine for the last 15 minutes.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheushighqueryload
         summary: Prometheus is reaching its maximum capacity serving concurrent requests.
-      expr: avg_over_time(prometheus_engine_queries{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) / max_over_time(prometheus_engine_queries_concurrent_max{job="prometheus-kube-prometheus-prometheus",namespace="monitoring"}[5m]) > 0.8
+      expr: avg_over_time(prometheus_engine_queries{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) / max_over_time(prometheus_engine_queries_concurrent_max{job="prometheus-stack-kube-prom-prometheus",namespace="backstage"}[5m]) > 0.8
       for: 15m
       labels:
         severity: warning
@@ -43482,9 +43478,9 @@ spec:
         summary: Prometheus encounters more than 3% errors sending alerts to any Alertmanager.
       expr: |-
         min without (alertmanager) (
-          rate(prometheus_notifications_errors_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring",alertmanager!~``}[5m])
+          rate(prometheus_notifications_errors_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage",alertmanager!~``}[5m])
         /
-          rate(prometheus_notifications_sent_total{job="prometheus-kube-prometheus-prometheus",namespace="monitoring",alertmanager!~``}[5m])
+          rate(prometheus_notifications_sent_total{job="prometheus-stack-kube-prom-prometheus",namespace="backstage",alertmanager!~``}[5m])
         )
         * 100
         > 3
@@ -43496,12 +43492,12 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-grafana
-  namespace: monitoring
+  name: prometheus-stack-grafana
+  namespace: backstage
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -43511,36 +43507,36 @@ spec:
     honorLabels: true
     path: /metrics
     scheme: http
-  jobLabel: "prometheus"
+  jobLabel: "prometheus-stack"
   selector:
     matchLabels:
       app.kubernetes.io/name: grafana
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: prometheus-stack
   namespaceSelector:
     matchNames:
-      - monitoring
+      - backstage
 ---
 # Source: kube-prometheus-stack/charts/kube-state-metrics/templates/servicemonitor.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-state-metrics
-  namespace: monitoring
+  name: prometheus-stack-kube-state-metrics
+  namespace: backstage
   labels:    
     helm.sh/chart: kube-state-metrics-4.24.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "2.7.0"
-    release: prometheus
+    release: prometheus-stack
 spec:
   jobLabel: app.kubernetes.io/name  
   selector:
     matchLabels:      
       app.kubernetes.io/name: kube-state-metrics
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: prometheus-stack
   endpoints:
     - port: http
       honorLabels: true
@@ -43549,25 +43545,25 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-prometheus-node-exporter
-  namespace: monitoring
+  name: prometheus-stack-prometheus-node-exporter
+  namespace: backstage
   labels:
     helm.sh/chart: prometheus-node-exporter-4.8.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: prometheus-node-exporter
     app.kubernetes.io/name: prometheus-node-exporter
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "1.5.0"
     jobLabel: node-exporter
-    release: prometheus
+    release: prometheus-stack
 spec:
   jobLabel: jobLabel
   
   selector:
     matchLabels:
       app.kubernetes.io/name: prometheus-node-exporter
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: prometheus-stack
   endpoints:
     - port: http-metrics
       scheme: http
@@ -43576,27 +43572,27 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-alertmanager
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-alertmanager
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-alertmanager
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   selector:
     matchLabels:
       app: kube-prometheus-stack-alertmanager
-      release: "prometheus"
+      release: "prometheus-stack"
       self-monitor: "true"
   namespaceSelector:
     matchNames:
-      - "monitoring"
+      - "backstage"
   endpoints:
   - port: http-web
     enableHttp2: true
@@ -43606,24 +43602,24 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-coredns
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-coredns
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-coredns
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   jobLabel: jobLabel
   selector:
     matchLabels:
       app: kube-prometheus-stack-coredns
-      release: "prometheus"
+      release: "prometheus-stack"
   namespaceSelector:
     matchNames:
       - "kube-system"
@@ -43635,17 +43631,17 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-apiserver
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-apiserver
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-apiserver
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   endpoints:
@@ -43675,24 +43671,24 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-kube-controller-manager
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-controller-manager
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-kube-controller-manager
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   jobLabel: jobLabel
   selector:
     matchLabels:
       app: kube-prometheus-stack-kube-controller-manager
-      release: "prometheus"
+      release: "prometheus-stack"
   namespaceSelector:
     matchNames:
       - "kube-system"
@@ -43708,24 +43704,24 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-kube-etcd
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-etcd
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-kube-etcd
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   jobLabel: jobLabel
   selector:
     matchLabels:
       app: kube-prometheus-stack-kube-etcd
-      release: "prometheus"
+      release: "prometheus-stack"
   namespaceSelector:
     matchNames:
       - "kube-system"
@@ -43737,24 +43733,24 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-kube-proxy
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-proxy
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-kube-proxy
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   jobLabel: jobLabel
   selector:
     matchLabels:
       app: kube-prometheus-stack-kube-proxy
-      release: "prometheus"
+      release: "prometheus-stack"
   namespaceSelector:
     matchNames:
       - "kube-system"
@@ -43766,24 +43762,24 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-kube-scheduler
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kube-scheduler
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-kube-scheduler
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   jobLabel: jobLabel
   selector:
     matchLabels:
       app: kube-prometheus-stack-kube-scheduler
-      release: "prometheus"
+      release: "prometheus-stack"
   namespaceSelector:
     matchNames:
       - "kube-system"
@@ -43799,16 +43795,16 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-kubelet
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-kubelet
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-kubelet    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   endpoints:
@@ -43889,63 +43885,63 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-operator
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-operator
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-operator
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   endpoints:
   - port: https
     scheme: https
     tlsConfig:
-      serverName: prometheus-kube-prometheus-operator
+      serverName: prometheus-stack-kube-prom-operator
       ca:
         secret:
-          name: prometheus-kube-prometheus-admission
+          name: prometheus-stack-kube-prom-admission
           key: ca
           optional: false
     honorLabels: true
   selector:
     matchLabels:
       app: kube-prometheus-stack-operator
-      release: "prometheus"
+      release: "prometheus-stack"
   namespaceSelector:
     matchNames:
-      - "monitoring"
+      - "backstage"
 ---
 # Source: kube-prometheus-stack/templates/prometheus/servicemonitor.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus-kube-prometheus-prometheus
-  namespace: monitoring
+  name: prometheus-stack-kube-prom-prometheus
+  namespace: backstage
   labels:
     app: kube-prometheus-stack-prometheus
     
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   selector:
     matchLabels:
       app: kube-prometheus-stack-prometheus
-      release: "prometheus"
+      release: "prometheus-stack"
       self-monitor: "true"
   namespaceSelector:
     matchNames:
-      - "monitoring"
+      - "backstage"
   endpoints:
   - port: http-web
     path: "/metrics"
@@ -43954,15 +43950,15 @@ spec:
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
-  name:  prometheus-kube-prometheus-admission
+  name:  prometheus-stack-kube-prom-admission
   labels:
     app: kube-prometheus-stack-admission    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 webhooks:
   - name: prometheusrulemutate.monitoring.coreos.com
@@ -43979,8 +43975,8 @@ webhooks:
           - UPDATE
     clientConfig:
       service:
-        namespace: monitoring
-        name: prometheus-kube-prometheus-operator
+        namespace: backstage
+        name: prometheus-stack-kube-prom-operator
         path: /admission-prometheusrules/validate
     timeoutSeconds: 10
     admissionReviewVersions: ["v1", "v1beta1"]
@@ -43993,11 +43989,11 @@ metadata:
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
-  name: prometheus-grafana-test
-  namespace: monitoring
+  name: prometheus-stack-grafana-test
+  namespace: backstage
   annotations:
     "helm.sh/hook": test-success
     "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded"
@@ -44006,40 +44002,40 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name:  prometheus-kube-prometheus-admission
-  namespace: monitoring
+  name:  prometheus-stack-kube-prom-admission
+  namespace: backstage
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: kube-prometheus-stack-admission    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 ---
 # Source: kube-prometheus-stack/charts/grafana/templates/tests/test-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-grafana-test
-  namespace: monitoring
+  name: prometheus-stack-grafana-test
+  namespace: backstage
   annotations:
     "helm.sh/hook": test-success
     "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded"
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
 data:
   run.sh: |-
     @test "Test Health" {
-      url="http://prometheus-grafana/api/health"
+      url="http://prometheus-stack-grafana/api/health"
 
       code=$(wget --server-response --spider --timeout 90 --tries 10 ${url} 2>&1 | awk '/^  HTTP/{print $2}')
       [ "$code" == "200" ]
@@ -44049,18 +44045,18 @@ data:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name:  prometheus-kube-prometheus-admission
+  name:  prometheus-stack-kube-prom-admission
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: kube-prometheus-stack-admission    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 rules:
   - apiGroups:
@@ -44076,45 +44072,45 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name:  prometheus-kube-prometheus-admission
+  name:  prometheus-stack-kube-prom-admission
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: kube-prometheus-stack-admission    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus-kube-prometheus-admission
+  name: prometheus-stack-kube-prom-admission
 subjects:
   - kind: ServiceAccount
-    name: prometheus-kube-prometheus-admission
-    namespace: monitoring
+    name: prometheus-stack-kube-prom-admission
+    namespace: backstage
 ---
 # Source: kube-prometheus-stack/templates/prometheus-operator/admission-webhooks/job-patch/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name:  prometheus-kube-prometheus-admission
-  namespace: monitoring
+  name:  prometheus-stack-kube-prom-admission
+  namespace: backstage
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: kube-prometheus-stack-admission    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 rules:
   - apiGroups:
@@ -44129,48 +44125,48 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name:  prometheus-kube-prometheus-admission
-  namespace: monitoring
+  name:  prometheus-stack-kube-prom-admission
+  namespace: backstage
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: kube-prometheus-stack-admission    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: prometheus-kube-prometheus-admission
+  name: prometheus-stack-kube-prom-admission
 subjects:
   - kind: ServiceAccount
-    name: prometheus-kube-prometheus-admission
-    namespace: monitoring
+    name: prometheus-stack-kube-prom-admission
+    namespace: backstage
 ---
 # Source: kube-prometheus-stack/charts/grafana/templates/tests/test.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: prometheus-grafana-test
+  name: prometheus-stack-grafana-test
   labels:
     helm.sh/chart: grafana-6.45.0
     app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "9.3.0"
     app.kubernetes.io/managed-by: Helm
   annotations:
     "helm.sh/hook": test-success
     "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded"
-  namespace: monitoring
+  namespace: backstage
 spec:
-  serviceAccountName: prometheus-grafana-test
+  serviceAccountName: prometheus-stack-grafana-test
   containers:
-    - name: prometheus-test
+    - name: prometheus-stack-test
       image: "bats/bats:v1.4.1"
       imagePullPolicy: "IfNotPresent"
       command: ["/opt/bats/bin/bats", "-t", "/tests/run.sh"]
@@ -44181,39 +44177,39 @@ spec:
   volumes:
     - name: tests
       configMap:
-        name: prometheus-grafana-test
+        name: prometheus-stack-grafana-test
   restartPolicy: Never
 ---
 # Source: kube-prometheus-stack/templates/prometheus-operator/admission-webhooks/job-patch/job-createSecret.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name:  prometheus-kube-prometheus-admission-create
-  namespace: monitoring
+  name:  prometheus-stack-kube-prom-admission-create
+  namespace: backstage
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded   
   labels:
     app: kube-prometheus-stack-admission-create    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   template:
     metadata:
-      name:  prometheus-kube-prometheus-admission-create
+      name:  prometheus-stack-kube-prom-admission-create
       labels:
         app: kube-prometheus-stack-admission-create        
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: prometheus-stack
         app.kubernetes.io/version: "42.2.1"
         app.kubernetes.io/part-of: kube-prometheus-stack
         chart: kube-prometheus-stack-42.2.1
-        release: "prometheus"
+        release: "prometheus-stack"
         heritage: "Helm"
     spec:
       containers:
@@ -44222,16 +44218,16 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - create
-            - --host=prometheus-kube-prometheus-operator,prometheus-kube-prometheus-operator.monitoring.svc
-            - --namespace=monitoring
-            - --secret-name=prometheus-kube-prometheus-admission
+            - --host=prometheus-stack-kube-prom-operator,prometheus-stack-kube-prom-operator.backstage.svc
+            - --namespace=backstage
+            - --secret-name=prometheus-stack-kube-prom-admission
           securityContext:
           
             {}
           resources:
             {}
       restartPolicy: OnFailure
-      serviceAccountName: prometheus-kube-prometheus-admission
+      serviceAccountName: prometheus-stack-kube-prom-admission
       securityContext:
         runAsGroup: 2000
         runAsNonRoot: true
@@ -44241,32 +44237,32 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name:  prometheus-kube-prometheus-admission-patch
-  namespace: monitoring
+  name:  prometheus-stack-kube-prom-admission-patch
+  namespace: backstage
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded   
   labels:
     app: kube-prometheus-stack-admission-patch    
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: prometheus-stack
     app.kubernetes.io/version: "42.2.1"
     app.kubernetes.io/part-of: kube-prometheus-stack
     chart: kube-prometheus-stack-42.2.1
-    release: "prometheus"
+    release: "prometheus-stack"
     heritage: "Helm"
 spec:
   template:
     metadata:
-      name:  prometheus-kube-prometheus-admission-patch
+      name:  prometheus-stack-kube-prom-admission-patch
       labels:
         app: kube-prometheus-stack-admission-patch        
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: prometheus-stack
         app.kubernetes.io/version: "42.2.1"
         app.kubernetes.io/part-of: kube-prometheus-stack
         chart: kube-prometheus-stack-42.2.1
-        release: "prometheus"
+        release: "prometheus-stack"
         heritage: "Helm"
     spec:
       containers:
@@ -44275,9 +44271,9 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - patch
-            - --webhook-name=prometheus-kube-prometheus-admission
-            - --namespace=monitoring
-            - --secret-name=prometheus-kube-prometheus-admission
+            - --webhook-name=prometheus-stack-kube-prom-admission
+            - --namespace=backstage
+            - --secret-name=prometheus-stack-kube-prom-admission
             - --patch-failure-policy=Fail
           securityContext:
           
@@ -44285,7 +44281,7 @@ spec:
           resources:
             {}
       restartPolicy: OnFailure
-      serviceAccountName: prometheus-kube-prometheus-admission
+      serviceAccountName: prometheus-stack-kube-prom-admission
       securityContext:
         runAsGroup: 2000
         runAsNonRoot: true
